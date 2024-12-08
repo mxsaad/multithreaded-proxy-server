@@ -1,33 +1,46 @@
 #!/bin/bash
 
-# proxyman.sh: Manages proxy server and clients
+# Define the container name
+CONTAINER_NAME="proxy"
+OUTPUT_DIR="output"
 
-# Server details
-SERVER_IMAGE="proxy_server_image"
-SERVER_CONTAINER="proxy_server"
-SERVER_PORT=8080
-
-# Client details
-CLIENT_IMAGE="proxy_client_image"
-
+# Start server if not running
 start_server() {
-  echo "Starting proxy server..."
-  docker build -t $SERVER_IMAGE .
-  docker run -d --rm --name $SERVER_CONTAINER -p $SERVER_PORT:8080 $SERVER_IMAGE
+  # Check if container is running
+  if ! docker ps --filter "name=$CONTAINER_NAME" --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
+    echo "Starting server..."
+    docker run -d --name "$CONTAINER_NAME" \
+      -v "$(pwd)/$OUTPUT_DIR:/app/$OUTPUT_DIR" \
+      proxy
+  else
+    echo "Server is already running."
+  fi
 }
 
+# Stop the server
 stop_server() {
-  echo "Stopping proxy server..."
-  docker stop $SERVER_CONTAINER
+  # Stop and remove the container
+  echo "Stopping server..."
+  docker stop "$CONTAINER_NAME" && docker rm "$CONTAINER_NAME"
 }
 
+# Start client and fetch URL
 start_client() {
-  local url=$1
-  echo "Starting proxy client for URL: $url"
-  docker run --rm $CLIENT_IMAGE java -cp /app/build client.ProxyClient $SERVER_CONTAINER $SERVER_PORT $url
+  if [ -z "$1" ]; then
+    echo "Error: URL argument is required."
+    exit 1
+  fi
+  URL=$1
+  echo "Starting client to fetch: $URL"
+  docker exec -d "$CONTAINER_NAME" java -cp /app/src ProxyClient "$URL"
 }
 
-case $1 in
+# Command handling
+case "$1" in
+  build)
+    echo "Building the Docker image..."
+    docker build -t proxy .
+    ;;
   start-server)
     start_server
     ;;
@@ -35,14 +48,10 @@ case $1 in
     stop_server
     ;;
   start-client)
-    if [ -z "$2" ]; then
-      echo "Usage: $0 start-client <url>"
-      exit 1
-    fi
     start_client "$2"
     ;;
   *)
-    echo "Usage: $0 {start-server|stop-server|start-client <url>}"
+    echo "Usage: $0 {build|start-server|stop-server|start-client <url>}"
     exit 1
     ;;
 esac

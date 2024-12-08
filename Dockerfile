@@ -1,15 +1,18 @@
-# Universal Dockerfile
-FROM openjdk:22-jdk
+# Use OpenJDK 22 base image
+FROM openjdk:22-jdk-slim
 
-# Set working directory
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy source code
+# Copy the application source code into the container
 COPY ./src /app/src
 
-# Compile Java source code
-RUN javac -d /app/build /app/src/**/*.java
+# Compile Java files
+RUN javac /app/src/ProxyServer.java /app/src/ProxyClient.java
 
-# Default command can be overridden at runtime
-CMD ["java", "-cp", "/app/build", "server.ProxyServer"]
+# Expose the port that the server will run on
+EXPOSE 8080
+
+# Default command: run the ProxyServer class
+CMD ["java", "-cp", "/app/src", "ProxyServer"]
 
