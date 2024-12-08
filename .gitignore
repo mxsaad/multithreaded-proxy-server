@@ -1,1 +1,6 @@
-output
+# Ignore everything inside the output/ directory
+output/*
+
+# But keep the output/ directory itself
+!output/
+
