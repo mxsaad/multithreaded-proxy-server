@@ -31,6 +31,10 @@ This project implements a multi-threaded proxy server and client in Java. The se
 
 ### Example Usage
 
+<details>
+
+<summary>Using Container (Recommended)</summary>
+
 To build the Docker image:
 
 ```bash
@@ -55,9 +59,38 @@ To stop the server:
 ./proxyman.sh stop
 ```
 
+</details>
+
+<details>
+
+<summary>Locally</summary>
+
+To compile the source code:
+
+```bash
+javac src/ProxyServer.java src/ProxyClient.java
+```
+
+To start the server:
+
+```bash
+java -cp src ProxyServer
+```
+
+To start the client and fetch content from a URL:
+
+```bash
+java -cp src ProxyClient "https://example.com"
+```
+
+Note: The server and client must be run in separate terminals.
+
+</details>
+
 The HTML files fetched by the client will be saved in the `output/` directory in the root of the project.
 
 ## Notes
 
 - The server listens on port 8080 by default. If the port is already in use, you may need to stop the existing process or change the port in the `ProxyServer.java` class.
 - The `proxyman.sh` script manages starting and stopping the server and clients within the Docker container.
+
