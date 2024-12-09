@@ -25,9 +25,9 @@ This project implements a multi-threaded proxy server and client in Java. The se
 ## Commands
 
 - `build`: Builds the Docker image.
-- `start-server`: Starts the proxy server (if not already running).
-- `stop-server`: Stops and removes the proxy server container.
-- `start-client <url>`: Starts a client to fetch content from the specified URL.
+- `start`: Starts the proxy server (if not already running).
+- `stop`: Stops and removes the proxy server container.
+- `fetch <url>`: Starts a client to fetch content from the specified URL.
 
 ### Example Usage
 
@@ -40,19 +40,19 @@ To build the Docker image:
 To start the server:
 
 ```bash
-./proxyman.sh start-server
+./proxyman.sh start
 ```
 
 To start the client and fetch content from a URL:
 
 ```bash
-./proxyman.sh start-client "https://example.com"
+./proxyman.sh fetch "https://example.com"
 ```
 
 To stop the server:
 
 ```bash
-./proxyman.sh stop-server
+./proxyman.sh stop
 ```
 
 The HTML files fetched by the client will be saved in the `output/` directory in the root of the project.

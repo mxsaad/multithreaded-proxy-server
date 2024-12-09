@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Define the container name
-CONTAINER_NAME="proxy"
+CONTAINER_NAME="proxyman"
 OUTPUT_DIR="output"
 
 # Start server if not running
-start_server() {
+start() {
   # Check if container is running
   if ! docker ps --filter "name=$CONTAINER_NAME" --format '{{.Names}}' | grep -q "$CONTAINER_NAME"; then
     echo "Starting server..."
@@ -18,14 +18,14 @@ start_server() {
 }
 
 # Stop the server
-stop_server() {
+stop() {
   # Stop and remove the container
   echo "Stopping server..."
   docker stop "$CONTAINER_NAME" && docker rm "$CONTAINER_NAME"
 }
 
 # Start client and fetch URL
-start_client() {
+fetch() {
   if [ -z "$1" ]; then
     echo "Error: URL argument is required."
     exit 1
@@ -39,19 +39,19 @@ start_client() {
 case "$1" in
   build)
     echo "Building the Docker image..."
-    docker build -t proxy .
+    docker build -t proxyman .
     ;;
-  start-server)
-    start_server
+  start)
+    start
     ;;
-  stop-server)
-    stop_server
+  stop)
+    stop
     ;;
-  start-client)
-    start_client "$2"
+  fetch)
+    fetch "$2"
     ;;
   *)
-    echo "Usage: $0 {build|start-server|stop-server|start-client <url>}"
+    echo "Usage: $0 {build|start|stop|fetch <url>}"
     exit 1
     ;;
 esac
